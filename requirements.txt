@@ -1,0 +1,8 @@
+Flask==2.1.2
+flask_sqlalchemy==2.5.1
+flask-marshmallow==0.14.0
+psycopg2-binary==2.9.3
+marshmallow_sqlalchemy==0.28.0
+python-dateutil==2.8.2
+flask_swagger_ui==4.11.1
+urllib3==1.26.9

@@ -1,5 +1,4 @@
 import collections
-from typing import List
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DateTime
 from werkzeug import Request

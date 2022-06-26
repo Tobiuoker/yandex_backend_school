@@ -1,6 +1,3 @@
-import os
-from tkinter.tix import Tree
-from flask import Flask
 from flask.cli import FlaskGroup
 
 from project import create_app, db

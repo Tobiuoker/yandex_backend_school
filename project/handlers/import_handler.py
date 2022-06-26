@@ -6,9 +6,6 @@ from werkzeug import Request
 from project.db.schema import ShopUnit, ShopUnitChanges, ShopUnitType
 from flask import Flask, make_response
 
-import json
-import time
-
 from project.handlers.util import parse_str_to_date, get_average_price
 
 def import_handler(request: Request, db: SQLAlchemy, app: Flask):
@@ -28,39 +25,7 @@ def import_handler(request: Request, db: SQLAlchemy, app: Flask):
           - при изменении товара, категории offer, сразу обновляется средняя цена его parent'а
           - при импорте сразу считается средняя цена для категорий 
     """
-    new_data_to_upload = []
     parents_date_to_update = []
-
-    # for dictionary in request:
-    #     if not dictionary:
-    #         return make_response("Невалидная схема документа или входные данные не верны.", 400)
-    #     parsed_date = f'{parse_str_to_date(dictionary.get("updateDate"))}' 
-
-    #     for item in dictionary.get("items"):
-    #         parent = ShopUnit.get_data_by_id(item.get("parentId"))
-    #         old_data_record = ShopUnit.get_data_by_id(item.get("id"))
-
-    #         validate_importing_unit(item, parent)
-
-    #         if not update_record_if_needed(item, old_data_record, parsed_date, db):
-    #             db.session.add(parse_dict_to_shop_unit(item, parsed_date, app))
-
-    #             if parent:
-    #                 if parent.children:
-    #                     parent.children = list(set([item.get("id")] + parent.children))
-    #                 else:
-    #                     parent.children = [item.get("id")]
-                
-    #             db.session.commit()
-            
-    #         if item.get("type") == ShopUnitType.offer.value and (parent and parent.type == ShopUnitType.category.value): 
-    #             if (old_data_record and old_data_record.price != item.get("price")) or not old_data_record:
-    #                 update_parent_average_price_if_needed(parent, db, parsed_date)
-            
-    #         if item.get("parentId"):
-    #             parents_date_to_update += [(item.get("parentId"), parsed_date)]
-
-    
 
     if request.headers['content-type'] != 'application/json':
         raise ValueError("Невалидная схема документа или входные данные не верны.")

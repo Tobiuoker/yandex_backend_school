@@ -52,11 +52,12 @@ Swagger документация
 
 Находясь в папке с файлом `docker-compose.yml` выполнить в терминале:
 
-  docker-compose build
-  docker-compose up
+    docker-compose build
+    docker-compose up
 
 ## <a name="tests"></a> Запуск тестов
 Выполнить команды:
-source env/bin/activate
-pip install pytest
-python -m pytest
+
+    source env/bin/activate
+    pip install pytest
+    python -m pytest

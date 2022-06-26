@@ -91,12 +91,11 @@ class BaseTestCase(TestCase):
 
     def initialize(self):
         for batch in init_data:
-            status, response = self.request('/imports', 'POST', batch) 
-            app.logger.info("qwqw %s", status)
-            app.logger.info("qwqw %s", response)
+            self.request('/imports', 'POST', batch) 
             
 
     def setUp(self):
+        db.drop_all()
         db.create_all()
 
         self.initialize()

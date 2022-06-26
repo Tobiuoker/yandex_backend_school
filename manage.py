@@ -5,8 +5,6 @@ from flask.cli import FlaskGroup
 
 from project import create_app, db
 
-# app = create_app("project.config.Config")
-
 app = create_app("project.config.Config")
 
 cli = FlaskGroup(app)

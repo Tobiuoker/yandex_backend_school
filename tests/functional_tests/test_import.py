@@ -1,7 +1,4 @@
-import json
-from urllib import response
 from tests.conftest import BaseTestCase
-from project.db.schema import ShopUnit
 
 class ImportTest(BaseTestCase):
     def test_import_success_code(self):

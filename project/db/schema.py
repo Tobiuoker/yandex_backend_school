@@ -1,18 +1,25 @@
-from email.policy import strict
-import marshmallow
 from . import db
-
-from marshmallow import Schema
-from marshmallow.fields import Int, Str
-
-from marshmallow.validate import Length, OneOf, Range
 
 from sqlalchemy import ARRAY, Column, String
 from enum import Enum
 
+from sqlalchemy.dialects.postgresql import JSON
+
 class ShopUnitType(str, Enum):
     offer = 'OFFER'
     category = 'CATEGORY'
+
+class ShopUnitChanges(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    shop_unit_id = db.Column(db.String(128), db.ForeignKey('shop_unit.id'), nullable=False,)
+    date_and_price = db.Column(JSON)
+
+    @staticmethod
+    def get_data_by_id(shop_unit_id: str):
+        """
+            Получение объекта из базы по заданному айди
+        """
+        return ShopUnitChanges.query.filter(ShopUnitChanges.shop_unit_id == shop_unit_id).first()
 
 class ShopUnit(db.Model):
     id = db.Column(db.String(128), primary_key=True, nullable=False)
@@ -22,11 +29,12 @@ class ShopUnit(db.Model):
     type = db.Column(db.String(128), nullable=False)
     price = db.Column(db.Integer, nullable=True)
     children = Column(ARRAY(String))
+    shop_unit_changes = db.relationship('ShopUnitChanges', cascade="all, delete", backref='shop_unit', uselist=False)
 
     @staticmethod
     def get_data_by_id(id: str):
         """
-            Получение объекта из базы по заданному айди
+            Получение объекта из базы по primary key
         """
         return ShopUnit.query.get(id)
 
@@ -38,23 +46,3 @@ class ShopUnit(db.Model):
         for column in self.__table__.columns:
             d[column.name] = f"{getattr(self, column.name).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]}Z" if column.name == "date" else getattr(self, column.name)
         return d
-
-class ShopUnitSchema(Schema):
-    id = Str(validate=Length(min=36, max=36), required=True, metadata={'index': True})
-    name = Str(validate=Length(min=1, max=256),required=True)
-    date = marshmallow.fields.DateTime()
-    parentId = Str(validate=Length(min=36, max=36), allow_none=True)
-    type = Str(validate=OneOf([unitType.value for unitType in ShopUnitType]), required=True)
-    price = Int(validate=Range(min=0), strict=True)
-    children = marshmallow.fields.List(marshmallow.fields.String())
-
-    # class Meta:
-    #     strict = True
-
-    # @marshmallow.validates_schema
-    # def validate(self, data, **kwargs):
-    #     if data["type"] == "CATEGORY" and data.get("price"):
-    #         raise ValidationError("У категорий поле price должно содержать null")
-         
-    #     if data["type"] != "CATEGORY" and data.get("children"):
-    #         raise ValidationError("Родителем товара или категории может быть только категория")

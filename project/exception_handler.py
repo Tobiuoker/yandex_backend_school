@@ -1,8 +1,9 @@
+from urllib.error import HTTPError
 from dateutil.parser import ParserError
 import logging
-from marshmallow import ValidationError
 from flask import make_response
 from functools import wraps
+from werkzeug.exceptions import HTTPException
 
 
 def handle_exception(logger: logging.Logger):
@@ -14,12 +15,13 @@ def handle_exception(logger: logging.Logger):
         def wrap(*args, **kwargs):
             try:
                 return f(*args, **kwargs)
-            except ValidationError as e:
-                return logAndReturnError(logger, str(e), 400)
             except ParserError as e:
                 return logAndReturnError(logger, str(e), 400)
             except ValueError as e:
                 return logAndReturnError(logger, str(e), 400)
+            except HTTPException as e:
+                if e.code == 404:
+                    return logAndReturnError(logger, "Категория/товар не найден.", 404)
             except Exception as e:
                 return logAndReturnError(logger, str(e), 400)
 
